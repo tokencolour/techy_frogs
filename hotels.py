@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup 
 
-print('hmmm.... to hotel dekhna hai?? To dekho na mana kon kiya hai...')
+print('hmmm.... to hotel dekhna hai??')
 s=requests.get('http://www.holidayiq.com/hotels')
 
 soup_main_hotels=BeautifulSoup(s.content)
