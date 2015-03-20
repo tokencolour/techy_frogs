@@ -59,7 +59,7 @@ obj={
       }
     ],
     "solutions": sol,
-    "maxprice": "INR-maxpr",
+    "maxprice": "INR-"+maxpr,
   }
 }
 
