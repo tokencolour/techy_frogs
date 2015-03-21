@@ -25,13 +25,13 @@ url=url+apikey
 
 origin_code=raw_input("enter orig code")
 desti_code=raw_input("enter dest code")
-date=raw_input("input date in the format yyyy-mm-dd")
+date='2015-04-25'
 sol=raw_input("no. of air solutions required")
 ad=int(raw_input("no of adults"))
-cd=int(raw_input("no of children"))
-sd=int(raw_input("no. of senior citizens"))
-infl=int(raw_input("no. of infants in lap"))
-infs=int(raw_input("no. of infants to be assigned a seat"))
+cd=0
+sd=0
+infl=0
+infs=0
 maxpr=raw_input("maximum price you can afford")
 prelst=['COACH', 'PREMIUM_COACH', 'BUSINESS', 'FIRST']
 print "available Cabins"
@@ -107,30 +107,30 @@ print
 for alltrips in j["trips"]["tripOption"]:
     for each in alltrips["slice"]:
         print "Duration of the trip"+ str(each["duration"])
-        print "the segments that constitute the flight are"
-        for seg in each["segment"]:
-            print "##"
-            print "Duration is "+ str(seg["duration"])
-            print "The flight this is a segment of:"
-            print "Carrier "+ str(seg["flight"]["carrier"])
-            print "In Cabin: " +str(seg["cabin"])
-            for leg in seg["leg"]:
-                print "Aircraft:"+ str(leg["aircraft"])
-                print "Arrival Time "+ str(leg["arrivalTime"])
-                print "Departure Time " +str(leg["departureTime"])
-                if leg.get("originTerminal"):
-                    
-                    print "origin Terminal"+ str(leg["originTerminal"])
-                if leg.get("destinationTerminal"):
-                    print "destination Terminal "+str(leg["destinationTerminal"])
+##        print "the segments that constitute the flight are"
+##        for seg in each["segment"]:
+##            print "##"
+##            print "Duration is "+ str(seg["duration"])
+##            print "The flight this is a segment of:"
+##            print "Carrier "+ str(seg["flight"]["carrier"])
+##            print "In Cabin: " +str(seg["cabin"])
+##            for leg in seg["leg"]:
+##                print "Aircraft:"+ str(leg["aircraft"])
+##                print "Arrival Time "+ str(leg["arrivalTime"])
+##                print "Departure Time " +str(leg["departureTime"])
+##                if leg.get("originTerminal"):
+##                    
+##                    print "origin Terminal"+ str(leg["originTerminal"])
+##                if leg.get("destinationTerminal"):
+##                    print "destination Terminal "+str(leg["destinationTerminal"])
                 #print "the duration  of this leg is" + str(leg["duration"])
     for each in alltrips["pricing"]:
-        print "the total base fare per passenger " + str(each["baseFareTotal"])
+##        print "the total base fare per passenger " + str(each["baseFareTotal"])
         print "total fare so calculated is"
         basefare=[int(  each["baseFareTotal"].split("R")[1])]
         #print basefare
         #assert False
         print "INR"+str((int(ad)+int(sd)+int(cd)+int(infs))*basefare[0])
         #assert False
-        print "the horizontal fare Calculation \n"+str(each["fareCalculation"])
-        print "**this is devoid of taxes**"
+##        print "the horizontal fare Calculation \n"+str(each["fareCalculation"])
+##        print "**this is devoid of taxes**"

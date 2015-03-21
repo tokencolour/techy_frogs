@@ -1,10 +1,17 @@
+##up ke reviews nhi de rha
+## kerala me bhi problem
+## j and k aur delhi ko fix karo
+
+
 print('kon se state me ghumne ka hai ??')
-print('Jammu & Kashmir jana hai to Jammu-Kashmir likhna')
+##print('Jammu & Kashmir jana hai to Jammu-Kashmir likhna')
 state=raw_input()
+
 
 if ' ' in state:
     state=state.split()
     state=state[0]+'-'+state[1]
+    
 
 
 import requests
@@ -21,6 +28,7 @@ resp=raw_input()
 
 review=[]
 title=[]
+p_name=[]
 if resp=='Ha':
     j=1
     q=list(state_ob.find_all(True))
@@ -31,6 +39,7 @@ if resp=='Ha':
                     if "color: #000000; margin-top: 0 !important;" in y['style']:
                         title.append('## '+y.a.string.encode('ascii','ignore'))
             except: continue
+    
         try:
             if y.name=='div' and y.has_attr('class'):
                 comment=y.blockquote.string.encode('ascii','ignore')
@@ -38,7 +47,30 @@ if resp=='Ha':
                     review.append(comment)
         except: continue
 
+        try:
+            if y.name=='span' and y.has_attr('class'):
+                if 'reviews-no' and 'htr-reviews-no' in y['class']:
+                    person=y.string.encode('ascii','ignore')
+                    if person not in p_name:
+                        p_name.append(person)
+        except:
+            continue
+##    if len(review)==0:
+##        print('started')
+##        for y in q:
+##            try:
+##                if y.name=='blockquote' and y.has_attr('class'):
+####                    print(y['class'])
+##                    if 'margin0' and 'review_datail_height' in y['class']:
+####                        print(y.br)
+##                        comment=y.get_text().strip()
+####                        print(comment)
+##                        if comment not in review:
+##                            review.append(comment)
+####                            print(comment)
+##            except: continue
     for i in range(len(review)):
+        print p_name[i]
         print title[i]
         print review[i]
         print
@@ -66,24 +98,24 @@ print('ye dekho sight-seeing ka menu, serial number enter karo')
 print
 i_d=1
 for x in city:
+    city[x].append('http://www.holidayiq.com/hotels/'+x.split(',')[0])
     city[x].append(i_d)
     print(str(i_d)+')')
     i_d+=1
     print(x)
+    print(city[x])
     print
 
 print
 print('karo karo jaldi karo')
 response_serial=int(raw_input())
 
+##print(city)
+
 for x in city:
-    if len(city[x])==3:
-        if city[x][2]==response_serial:
-            load_url= city[x][1]
-            break
-    else:
-        print('Data not available for this choice')
-        assert(False)
+    if city[x][-1]==response_serial:
+        load_url= city[x][1]
+        break
         
 place_page=requests.get(load_url)
 place=BeautifulSoup(place_page.content)
@@ -96,7 +128,37 @@ for x in q4:
         tmp=x.string.encode('ascii','ignore')
         place_folder[i_d]=[tmp,x.a['href']]
         i_d+=1
+      
+    
+##time=[]   
+##for x in place_folder:
+##    print(place_folder[x][1])
+##    ss_page=requests.get(place_folder[x][1])
+##    ss=BeautifulSoup(place_page.content)
+##    q5=list(ss.find_all(True))
+##    print('done')
+##    for y in q5:
+##        if y.name=='span':            
+##            if y.has_attr('class') and 'travellers-recommended-for' in y['class']:
+##                tmp=x.string.encode('ascii','ignore')
+##                print(tmp)
+##
+####                print(y['class'])
+##            if y.has_attr('class') and 'travellers-recommendation-details' in y['class']:
+##                tmp=y.string.encode('ascii','ignore')
+##                print('ok')
+##                if tmp.split()[0]!='During':
+##                    print('ok2')
+##                    time.append([x,place_folder[x][0],tmp])
 
+from tmp3 import *
+
+t1=(get_ss_time(place_folder))
+
+from day_planner import *
+
+yashu=recommend_package(1,place_folder,t1)
+        
 print('Now choose your sight-seeing destination')
 print
 
@@ -117,9 +179,9 @@ q4=list(sight.find_all(True))
 
 print('""""Chief Features"""')
 print
-c=0
+
 for x in q4:
-    if x.name=='span':
+    if x.name=='span':     
         try:
             if 'travellers-recommended-for' in x['class']:
                 tmp=x.string.encode('ascii','ignore')
@@ -147,4 +209,5 @@ if response==1:
                 print
                 print
         except: continue
+
 
