@@ -18,7 +18,7 @@ def get_state_reviews(state):
     
     review=[]
     title=[]
-    review_person_name=[]
+    p_name=[]
     q=list(state_ob.find_all(True))
     for y in q:
         if y.has_attr('class') and y.has_attr('style'):
@@ -35,19 +35,55 @@ def get_state_reviews(state):
         except: continue
         
         try:
-            if y.name=='li' and y.has_attr('class'):
-                if y['class']=='reviewer-name':
-                    person=y.span.string.encode('ascii','ignore')
-                    if person not in review_person_name:
-                        review_person_name.append(person)
+            if y.name=='span' and y.has_attr('class'):
+                if 'reviews-no' and 'htr-reviews-no' in y['class']:
+                    person=y.string.encode('ascii','ignore')
+                    if person not in p_name:
+                        p_name.append(person)
         except:
             continue
 
-    return(review_person_name,title,review)
+    if len(review)==0:
+        for y in q:
+            try:
+                if y.name=='blockquote' and y.has_attr('class'):
+                    if 'margin0' and 'review_datail_height' in y['class']:
+                        comment=y.get_text().strip()
+                        if comment not in review:
+                            review.append(comment)
+            except: continue
 
-def display_city_reviews(state):
+    return(p_name,title,review)
+
+##print(get_state_reviews(raw_input()))
+
+def display_city_reviews(state,city):
     print('under construction')
-##    isko banana padega
+##   city_list=get_city_list_with_details(state)
+##   
+##   for x in city_list:
+##       if x[3]==city:
+##           city_url=x[0]
+##        
+##    city_page=requests.get(city_url)
+##    city_ob=BeautifulSoup(city_page.content)
+##
+##    review=[]
+##    title=[]
+##    p_name=[]
+##
+##    q=list(city_ob.find_all(True))
+##    for y in q:
+##        if y.has_attr('class') and y.has_attr('style'):
+##            try:
+##                if 'h2' in y['class']:
+##                    if "color: #000000; margin-top: 0 !important;" in y['style']:
+##                        title.append('## '+y.a.string.encode('ascii','ignore'))
+##            except: continue
+    
+
+    
+    
 
 
 def get_city_list_with_details(state):
@@ -77,14 +113,15 @@ def get_city_list_with_details(state):
             if x.name=='a':
                 tmp=x.string.encode('ascii','ignore')
                 if 'sightseeing' in tmp:
-                    city[city_name].append(x['href'])
+                    if len(city[city_name])==1:
+                        city[city_name].append(x['href'])
                 
         except: continue      
     """ yamuna nagar haryana check karna hai, kuch gadbad hai"""
     i_d=1
     for x in city:
-        city[x].append(x.split(',')[0])
         city[x].append('http://www.holidayiq.com/hotels/'+x.split(',')[0])
+        city[x].append(x.split(',')[0])
 ##        city[x].append(i_d)
         i_d+=1
 
@@ -94,19 +131,24 @@ def get_city_list_with_details(state):
     ##city[3]=city name
     return city
 
+##print(get_city_list_with_details(raw_input()))
+
+
 
 def get_sightseeing_list(state,city):
     city_details=get_city_list_with_details(state)
     for x in city_details:
-        if city_details[-1]==city:
-            try:
-                ss_url=x[1]
-                ss_page=requests.get(load_url)
-                ss_ob=BeautifulSoup(place_page.content)
-            except:
-                print('Data not available for this choice')
-                assert(False)
-    q4=list(ss_ob.find_all(True))
+        if city_details[x][-1]==city:
+##            try:
+            ss_url=city_details[x][1]
+            ss_page=requests.get(ss_url)
+            ss_ob=BeautifulSoup(ss_page.content)
+##            except:
+##            print('Data not available for this choice')
+##            assert(False)
+    try:
+        q4=list(ss_ob.find_all(True))
+    except: return ('Data not available for this choice')
     ss_list={}
     i_d=1
     for x in q4:
@@ -119,11 +161,16 @@ def get_sightseeing_list(state,city):
 
     return ss_list
 
+##t1=raw_input()
+##t2=raw_input()
+##print(get_sightseeing_list(t1,t2))
+
+
 def get_sightseeing_reviews(state,city,ss_id):
     ss_list=get_sightseeing_list(state,city)
     for x in ss_list:
-        if x==ss_id:
-            sight_page_url=x[-1]
+        if x==int(ss_id):
+            sight_page_url=ss_list[x][-1]
             break
     
     sight_page=requests.get(sight_page_url)
@@ -158,6 +205,12 @@ def get_sightseeing_reviews(state,city,ss_id):
         
     return(details,title,review)
 
+inp1=raw_input()
+inp2=raw_input()
+inp3=raw_input()
+
+print(get_sightseeing_reviews(inp1,inp2,inp3))
+
 def get_hotel_list(state,city):
     city_details=get_city_list_with_details(state)
     for x in city_details:
@@ -186,6 +239,10 @@ def get_hotel_list(state,city):
                 load_hotel_names[i].append(x.a['href'])
                 i+=1
     return(load_hotel_names)
+
+
+
+
 
 def get_hotel_reviews(state,city,hotel_id):
     hotel_list=get_hotel_list(state,city)
@@ -223,7 +280,38 @@ def get_hotel_reviews(state,city,hotel_id):
 
 
     
+def get_ss_time(state,city):
+
+    ss_folder=get_sightseeing_list(state,city)
     
+    time=[]
+    for x in ss_folder:
+        ss_page=requests.get(ss_folder[x][1])
+        ss=BeautifulSoup(ss_page.content)
+        q5=list(ss.find_all(True))
+        print('loaded')
+
+        check=0
+        for y in q5:
+            if y.name=='span':            
+                if y.has_attr('class') and 'travellers-recommended-for' in y['class']:
+                    tmp=y.string.encode('ascii','ignore')
+                    if 'Length' in tmp: check=1
+
+                if y.has_attr('class') and 'travellers-recommendation-details' in y['class']:
+                    if check==1:
+                        tmp=y.string.encode('ascii','ignore')
+                        if '3hrs' in tmp:
+                            time.append(4.25)
+                        elif '1-2hrs' in tmp:
+                            time.append(1.5)
+                        elif '1hr' in tmp:
+                            time.append(0.7)
+                        else:
+                            time.append(1)
+                        check=0
+
+    return time    
 
 
 
