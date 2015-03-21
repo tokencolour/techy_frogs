@@ -191,31 +191,38 @@ def get_sightseeing_reviews(state,city,ss_id):
             except: continue
     title=[]
     review=[]
-    p_name=[] ## abhi karna hai
+    p_name=[]
     for x in q4:
         try:
             if x.name=='p':
                 if x.has_attr('class') and x.has_attr('style'):
                     tmp=(x.a.string.encode('ascii','ignore'))
-                    title=title.append(tmp)
+                    title.append(tmp)
             if x.name=='blockquote':
                 tmp=(x.string.encode('ascii','ignore'))
                 review.append(tmp)
+
+            if x.name=='span' and x.has_attr('class'):
+                if 'reviews-no' and 'htr-reviews-no' in x['class']:
+                    person=x.string.encode('ascii','ignore')
+                    if person not in p_name:
+                        p_name.append(person)
+                    
         except: continue
         
-    return(details,title,review)
+    return(details,p_name,title,review)
 
-inp1=raw_input()
-inp2=raw_input()
-inp3=raw_input()
-
-print(get_sightseeing_reviews(inp1,inp2,inp3))
+##inp1='uttar pradesh'
+##inp2='Varanasi'
+##inp3=1
+##
+##print(get_sightseeing_reviews(inp1,inp2,inp3))
 
 def get_hotel_list(state,city):
     city_details=get_city_list_with_details(state)
     for x in city_details:
-        if city_details[-1]==city:
-            city_hotels_url=city_details[2]
+        if city_details[x][-1]==city:
+            city_hotels_url=city_details[x][2]
     
     s2=requests.get(city_hotels_url)
     soup_city_hotel=BeautifulSoup(s2.content)
@@ -228,19 +235,23 @@ def get_hotel_list(state,city):
         if(x.has_attr('class')):
             if 'hotel-list-hotel-name' in x['class']:
                 load_hotel_names.append([])
-                load_hotel_names[i].append(i)
+                load_hotel_names[i].append(i+1)
                 load_hotel_names[i].append(x.a['title'])
                 load_hotel_names[i].append(x.a['href'])
                 i+=1
             elif 'hotel-semlayout-title' in x['class']:
                 load_hotel_names.append([])
-                load_hotel_names[i].append(i)
+                load_hotel_names[i].append(i+1)
                 load_hotel_names[i].append(x.a.string.encode('ascii','ignore'))
                 load_hotel_names[i].append(x.a['href'])
                 i+=1
+##    loadhotelnames[0]=id,[1]=hotelname,[2]=link
     return(load_hotel_names)
 
 
+##t1=raw_input()
+##t2=raw_input()
+##print(get_hotel_list(t1,t2))
 
 
 
@@ -255,7 +266,7 @@ def get_hotel_reviews(state,city,hotel_id):
         return('id does noe exist')
     
 
-    s3=requests.get(x[1])
+    s3=requests.get(hotel_url)
     soup_hotel=BeautifulSoup(s3.content)
     q2=list(soup_hotel.find_all(True))
 
@@ -266,8 +277,8 @@ def get_hotel_reviews(state,city,hotel_id):
         if y.has_attr('class'):
             try:
                 if 'reviews-tag-line-link' in y['class']:
-                    tmp=('## '+y.a.string.encode('ascii','ignore'))
-                    tiile.append(tmp)
+                    tmp=(y.a.string.encode('ascii','ignore'))
+                    title.append(tmp)
             except: continue
             
             try:
@@ -275,8 +286,23 @@ def get_hotel_reviews(state,city,hotel_id):
                     tmp=(y.string.encode('ascii','ignore'))
                     review.append(tmp)
             except: continue
+            
+            try:
+                if y.name=='span' and y.has_attr('class'):
+                    if 'reviews-no' and 'htr-reviews-no' in y['class']:
+                        person=y.string.encode('ascii','ignore')
+                        if person not in p_name:
+                            p_name.append(person)
+            except: continue
+                
 
-    return(title,review,p_name)
+    return(p_name,title,review)
+
+##inp1='uttar pradesh'
+##inp2='Varanasi'
+##inp3=2
+##
+##print(get_hotel_reviews(inp1,inp2,inp3))
 
 
     
@@ -285,12 +311,11 @@ def get_ss_time(state,city):
     ss_folder=get_sightseeing_list(state,city)
     
     time=[]
+    print(len(ss_folder))
     for x in ss_folder:
         ss_page=requests.get(ss_folder[x][1])
         ss=BeautifulSoup(ss_page.content)
         q5=list(ss.find_all(True))
-        print('loaded')
-
         check=0
         for y in q5:
             if y.name=='span':            
@@ -310,8 +335,13 @@ def get_ss_time(state,city):
                         else:
                             time.append(1)
                         check=0
-
+    if len(ss_folder)>len(time):
+        for i in range(len(ss_folder)-len(time)):
+            time.append(1)
     return time    
 
 
+t1=raw_input()
+t2=raw_input()
+print(get_ss_time(t1,t2))
 
