@@ -1,8 +1,21 @@
-##maxprice abhi dekh lena
+
 ## prc ke input ka dhyan rakhna
 import json
 import requests
-def findflight(origin_code, desti_code, date, sol, ad, cd, sd, infl, infs, prc): 
+###############(string,string,string,string, int, int, int, int, int , int, string)
+## date ka format 29-09-2015
+## sol-- no of airfare soln hai ## sabh k type ka dhyan rakhna
+## baki ad-adults
+## cd- children
+## sd-senior citizens
+## infl-infants who dont require a seat
+## infs-infants who require a seat
+## prc  preferred cabin hai
+##'COACH', 'PREMIUM_COACH', 'BUSINESS', 'FIRST'
+## inme se bhar dena
+## matlab jaise 'coach' k liye 1
+## maxpr string hai to  jaise '7000' pass krna
+def findflight(origin_code, desti_code, date, sol, ad, cd, sd, infl, infs, prc, maxpr): 
     url='https://www.googleapis.com/qpxExpress/v1/trips/search?key='
     headers={'Content-Type': 'application/json'}
     apikey='AIzaSyB0Z5xwCsHNYnkA1YSYFePn_qNOQ-R27MM'
@@ -43,7 +56,7 @@ def findflight(origin_code, desti_code, date, sol, ad, cd, sd, infl, infs, prc):
           }
         ],
         "solutions": sol,
-        
+        "maxprice": "INR-"+maxpr
       }
     }
 
