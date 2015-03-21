@@ -341,7 +341,7 @@ def get_ss_time(state,city):
     return time    
 
 
-t1=raw_input()
-t2=raw_input()
-print(get_ss_time(t1,t2))
+##t1=raw_input()
+##t2=raw_input()
+##print(get_ss_time(t1,t2))
 
