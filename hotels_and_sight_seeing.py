@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import sqlite3
+import os
 
 
 
@@ -52,8 +54,12 @@ def get_state_reviews(state):
                         if comment not in review:
                             review.append(comment)
             except: continue
+    result=[]
+    result.append(p_name)
+    result.append(title)
+    result.append(review)
 
-    return(p_name,title,review)
+    return result
 
 ##print(get_state_reviews(raw_input()))
 
@@ -192,6 +198,7 @@ def get_sightseeing_reviews(state,city,ss_id):
     title=[]
     review=[]
     p_name=[]
+    
     for x in q4:
         try:
             if x.name=='p':
@@ -307,38 +314,87 @@ def get_hotel_reviews(state,city,hotel_id):
 
     
 def get_ss_time(state,city):
-
-    ss_folder=get_sightseeing_list(state,city)
+    conn=sqlite3.connect('ss_cache.db')
+    c=conn.cursor()
     
-    time=[]
-    print(len(ss_folder))
-    for x in ss_folder:
-        ss_page=requests.get(ss_folder[x][1])
-        ss=BeautifulSoup(ss_page.content)
-        q5=list(ss.find_all(True))
-        check=0
-        for y in q5:
-            if y.name=='span':            
-                if y.has_attr('class') and 'travellers-recommended-for' in y['class']:
-                    tmp=y.string.encode('ascii','ignore')
-                    if 'Length' in tmp: check=1
+    def tableCreate():
+        c.execute("CREATE TABLE IF NOT EXISTS ss_time( query TEXT, time TEXT)")
 
-                if y.has_attr('class') and 'travellers-recommendation-details' in y['class']:
-                    if check==1:
+    def dataEntry(query, time):
+        c.execute("INSERT INTO ss_time (query, time) VALUES (?,?)",
+              (query, time))
+        conn.commit()
+    tableCreate()
+##    if  os.path.isfile('ss_cache.db'):
+##        pass
+##    else:
+##        tableCreate()
+        
+    #sql="SELECT * FROM ss_time WHERE keyword =?"
+    queryasked= state+city
+    c.execute('''SELECT query, time FROM ss_time''')
+    all_rows=c.fetchall()
+    query_lst=[]
+    for row in all_rows:
+        
+        query_lst.append(row[0])
+    if queryasked in query_lst:
+       # print "query in db"
+##        c.execute('''SELECT query, time FROM ss_time WHERE query=?''', (queryasked,))
+        c.execute('SELECT ({coi}) FROM {tn} WHERE {cn}="%s"'.\
+            format(coi="time", tn="ss_time", cn="query") % queryasked)
+        all_rows_for_query = c.fetchall()
+        res=[]
+        for tu in all_rows_for_query:
+            #res.append(int(tu[0]))
+            v=tu[0]
+            v=v.replace('[','')
+            v=v.replace(']','')
+            lop=v.split(',')
+            l=[]
+            for each in lop:
+                l.append(float(each))
+            
+        return l
+        
+    else:
+        #print "query not in db"
+        
+        
+    #dataEntry(idfordb,forecast_list[0], forecast_list[1], forecast_list[2])
+
+        ss_folder=get_sightseeing_list(state,city)
+        
+        time=[]
+        #print(len(ss_folder))
+        for x in ss_folder:
+            ss_page=requests.get(ss_folder[x][1])
+            ss=BeautifulSoup(ss_page.content)
+            q5=list(ss.find_all(True))
+            check=0
+            for y in q5:
+                if y.name=='span':            
+                    if y.has_attr('class') and 'travellers-recommended-for' in y['class']:
                         tmp=y.string.encode('ascii','ignore')
-                        if '3hrs' in tmp:
-                            time.append(4.25)
-                        elif '1-2hrs' in tmp:
-                            time.append(1.5)
-                        elif '1hr' in tmp:
-                            time.append(0.7)
-                        else:
-                            time.append(1)
-                        check=0
-    if len(ss_folder)>len(time):
-        for i in range(len(ss_folder)-len(time)):
-            time.append(1)
-    return time    
+                        if 'Length' in tmp: check=1
+
+                    if y.has_attr('class') and 'travellers-recommendation-details' in y['class']:
+                        if check==1:
+                            tmp=y.string.encode('ascii','ignore')
+                            if '3hrs' in tmp:
+                                time.append(4.25)
+                            elif '1-2hrs' in tmp:
+                                time.append(1.5)
+                            elif '1hr' in tmp:
+                                time.append(0.7)
+                            else:
+                                time.append(1)
+                            check=0
+        if len(ss_folder)>len(time):
+            for i in range(len(ss_folder)-len(time)):
+                time.append(1)
+        dataEntry(queryasked, str(time))
+        return time    
 
 
 ##t1=raw_input()

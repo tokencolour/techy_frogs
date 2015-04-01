@@ -3,7 +3,7 @@
 import json
 import requests
 ###############(string,string,string,string, int, int, int, int, int , int, string)
-## date ka format 29-09-2015
+## date ka format 2015-09-29
 ## sol-- no of airfare soln hai ## sabh k type ka dhyan rakhna
 ## baki ad-adults
 ## cd- children
@@ -108,33 +108,33 @@ def findflight(origin_code, desti_code, date, sol, ad, cd, sd, infl, infs, prc, 
         res_lst=[]
         for each in alltrips["slice"]:
             res_lst.append( "Duration of the trip "+ str(each["duration"]))
-##            res_lst.append( "The segments that constitute the flight are ")
-##            for seg in each["segment"]:
-##                res_lst.append( "##")
-##                res_lst.append( "Duration is "+ str(seg["duration"]))
-##                res_lst.append( "The flight this is a segment of:")
-##                res_lst.append( "Carrier "+ str(seg["flight"]["carrier"]))
-##                res_lst.append( "In Cabin: " +str(seg["cabin"]))
-##                for leg in seg["leg"]:
-##                    res_lst.append( "Aircraft:"+ str(leg["aircraft"]))
-##                    res_lst.append( "Arrival Time "+ str(leg["arrivalTime"]))
-##                    res_lst.append( "Departure Time " +str(leg["departureTime"]))
-##                    if leg.get("originTerminal"):
-##                        
-##                        res_lst.append( "origin Terminal"+ str(leg["originTerminal"]))
-##                    if leg.get("destinationTerminal"):
-##                        res_lst.append( "destination Terminal "+str(leg["destinationTerminal"]))
-##                    #print "the duration  of this leg is" + str(leg["duration"])
+            res_lst.append( "The segments that constitute the flight are ")
+            for seg in each["segment"]:
+                res_lst.append( "##")
+                res_lst.append( "Duration is "+ str(seg["duration"]))
+                res_lst.append( "The flight this is a segment of:")
+                res_lst.append( "Carrier "+ str(seg["flight"]["carrier"]))
+                res_lst.append( "In Cabin: " +str(seg["cabin"]))
+                for leg in seg["leg"]:
+                    res_lst.append( "Aircraft:"+ str(leg["aircraft"]))
+                    res_lst.append( "Arrival Time "+ str(leg["arrivalTime"]))
+                    res_lst.append( "Departure Time " +str(leg["departureTime"]))
+                    if leg.get("originTerminal"):
+                        
+                        res_lst.append( "origin Terminal"+ str(leg["originTerminal"]))
+                    if leg.get("destinationTerminal"):
+                        res_lst.append( "destination Terminal "+str(leg["destinationTerminal"]))
+                    #print "the duration  of this leg is" + str(leg["duration"])
         for each in alltrips["pricing"]:
-##            res_lst.append("the total base fare per passenger " + str(each["baseFareTotal"]))
+            res_lst.append("the total base fare per passenger " + str(each["baseFareTotal"]))
             res_lst.append( "The total fare so calculated is")
             basefare=[int(  each["baseFareTotal"].split("R")[1])]
             #print basefare
             #assert False
             res_lst.append( "INR"+str((int(ad)+int(sd)+int(cd)+int(infs))*basefare[0]))
             #assert False
-##            res_lst.append( "the horizontal fare Calculation \n"+str(each["fareCalculation"]))
-##            res_lst.append( "**this is devoid of taxes**")
+            res_lst.append( "the horizontal fare Calculation \n"+str(each["fareCalculation"]))
+            res_lst.append( "**this is devoid of taxes**")
         res_string="\n".join(res_lst)
         response.append(res_string)
     return response

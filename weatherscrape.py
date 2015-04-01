@@ -2,12 +2,16 @@ import requests
 from bs4 import BeautifulSoup, Tag
 
 ##print ("Enter the name of the city")
-###print("Ensure that the first letter is in caps")
+##print("Ensure that the first letter is in caps")
 ##print("In case you are obsessed with Bangalore...put it's new name...Bengaluru")
 ##city=raw_input()
-
 def findweather(city, dd, mm):
-    wiki_response=requests.get('http://en.wikipedia.org/wiki/List_of_airports_in_India')
+    for y in range(10):
+        try:
+            wiki_response=requests.get('http://en.wikipedia.org/wiki/List_of_airports_in_India')
+            break
+        except:
+            continue
     wiki_soup=BeautifulSoup(wiki_response.content)
     table=wiki_soup.findAll('table')
     all_tr=table[3].findAll('tr')
@@ -42,7 +46,12 @@ def findweather(city, dd, mm):
 ##    mm=raw_input()
 ##    yy=raw_input()
     url='http://www.wunderground.com/history/airport/'+code+'/1972/'+mm+'/'+dd+'/PlannerHistory.html?req_city='+code+'&req_state=&req_statename=India&reqdb.zip=00000&reqdb.magic=3&reqdb.wmo=42369&MR=1'
-    response=requests.get(url)
+    for y in range(10):
+        try:
+            response=requests.get(url)
+            break
+        except:
+            continue
     soup=BeautifulSoup(response.content)
     mydivs=soup.findAll("div",{"class": "layerImage"})
     lst_fore=[]
@@ -68,7 +77,16 @@ def findweather(city, dd, mm):
 ##        print comment
 ##    for keyword in lst_fore:
 ##        print keyword
-    return forecast
 
-##if name=='__main__':
-##    fore_object=findweather(city)
+    return forecast
+print ("Enter the name of the city")
+print("Ensure that the first letter is in caps")
+print("In case you are obsessed with Bangalore...put it's new name...Bengaluru")
+city=raw_input()
+
+print "enter date on which you plan to visit the place"
+print "input date then month and then year seperated by a new line"
+dd=raw_input()
+mm=raw_input()
+yy=raw_input()
+findweather(city, dd, mm)

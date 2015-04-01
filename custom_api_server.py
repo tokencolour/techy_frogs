@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request, jsonify
 from hotels_and_sight_seeing import *
 import sqlite3
 import os
+import json
 
 app = Flask(__name__)
 
@@ -17,8 +18,14 @@ def get_hotels():
         queries_res.append(tmp[1])
 
     answer=get_hotel_list(queries_res[0],queries_res[1])
+    dic={}
+    i=1
+    for elem in answer:
+        dic[i]=elem[1]
+        i+=1
+        
 
-    return jsonify(answer)
+    return json.dumps(dic, sort_keys=True)
 
 
 

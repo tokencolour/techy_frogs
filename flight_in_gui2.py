@@ -24,7 +24,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_Form(QtGui.QWidget):
+class Flight_Form(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
@@ -212,11 +212,11 @@ class Ui_Form(QtGui.QWidget):
         
     
 
-if __name__ == "__main__":
-    
-    app=QtGui.QApplication(sys.argv)
-    output = None
-    ex=Ui_Form()
-    ex.show()
-    
-    sys.exit(app.exec_())
+##if __name__ == "__main__":
+##    
+##    app=QtGui.QApplication(sys.argv)
+##    output = None
+##    ex=Ui_Form()
+##    ex.show()
+##    
+##    sys.exit(app.exec_())

@@ -32,7 +32,7 @@ cd=int(raw_input("no of children"))
 sd=int(raw_input("no. of senior citizens"))
 infl=int(raw_input("no. of infants in lap"))
 infs=int(raw_input("no. of infants to be assigned a seat"))
-maxpr=raw_input("maximum price you can afford")
+#maxpr=raw_input("maximum price you can afford")
 prelst=['COACH', 'PREMIUM_COACH', 'BUSINESS', 'FIRST']
 print "available Cabins"
 count=1
@@ -59,18 +59,18 @@ obj={
       }
     ],
     "solutions": sol,
-    "maxprice": "INR-"+maxpr,
+    #"maxprice": "INR-"+maxpr,
   }
 }
 
 ##request.maxprice vaale se max price tak ki airlines hi aayenge
 json_request=json.dumps(obj)
 for y in range(10):
-##    try:
-    resp=requests.post(url, data=json_request, headers=headers)
-##        break
-##    except:
-##        continue
+    try:
+        resp=requests.post(url, data=json_request, headers=headers)
+        break
+    except:
+        continue
 j=json.loads(resp.content)
 
 print "airports involved"

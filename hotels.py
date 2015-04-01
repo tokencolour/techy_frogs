@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup 
 
-print('hmmm.... to hotel dekhna hai??')
+print('hmmm.... to hotel dekhna hai?? To dekho na mana kon kiya hai...')
 s=requests.get('http://www.holidayiq.com/hotels')
 
 soup_main_hotels=BeautifulSoup(s.content)
@@ -9,6 +9,7 @@ soup_main_hotels=BeautifulSoup(s.content)
 ob1=soup_main_hotels.div
 
 li=ob1.find_all('li')
+##li = list for all elements containing li where city hotels are
 
 print('Input the city of your choice')
 print('Please ensure the initial letter is in caps')
@@ -17,14 +18,17 @@ print('Your choice is '+inp_city)
 try:
         for x in li:
                 t=list(x.stripped_strings)
+                #print "t is"+t
+                #assert False
                 for y in t:
                         if y=='Hotels in '+inp_city:
                                 re=x.a['href']
+                            
         if re:
                 print('Hotel list is being loaded, this may not take long...')
 except:
         print('Dekh bhai, popular jagah ka naam daal aur')
-        print('kg k bachche k tarah spelling mistake mat kar')
+        print('kg k bachche k tarah speeling mistake mat kar')
 
 
 s2=requests.get(re)
@@ -57,14 +61,30 @@ if tmp>10:
         print('par ab bola hai to dekho')
 for x in load_hotel_names[:tmp]:
         try:
+            
                 print
                 print(str(j)+')')
                 j+=1
 ##                print(x)
                 print(x[0])
                 print
+##                connect_timeout = 0.0001
+##                read_timeout=1.0
+##                try:
+##                    
+##                    s3=requests.get(url=x[1])#, timeout=(connect_timeout, 10.0))
+##                except requests.exceptions.ConnectionError as e:
+##                    print "These aren't the domains we're looking for."
+##                except requests.exceptions.ConnectTimeout as e:
+##                    print "Too slow Mojo!"
                 s3=requests.get(x[1])
+                try:
+                    s3.raise_for_status()
+                except requests.exceptions.HTTPError as e:
+                    print "And you get an HTTPError:", e.message
+
                 soup_hotel=BeautifulSoup(s3.content)
+                print ("got content now")
                 q2=list(soup_hotel.find_all(True))
                 for y in q2:
                         if y.has_attr('class'):
@@ -83,6 +103,5 @@ for x in load_hotel_names[:tmp]:
                                         
         except: continue
                                 
-
 
 
